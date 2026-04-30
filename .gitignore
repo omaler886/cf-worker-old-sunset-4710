@@ -1,0 +1,12 @@
+node_modules/
+dist*/
+runtime-*.js
+runtime-*.html
+*.bin
+api_meta/
+src_from_cf/
+production*.html*
+extracted*.html
+extracted_script_*.js
+worker-current.mjs
+hitokoto_*.txt

@@ -1,0 +1,12 @@
+name = "old-sunset-4710"
+main = "worker.js"
+compatibility_date = "2025-12-05"
+keep_vars = true
+
+[[kv_namespaces]]
+binding = "CARD_ORDER"
+id = "aa25253a5c7b4d2db98af146406fe970"
+
+[observability]
+enabled = true
+head_sampling_rate = 1

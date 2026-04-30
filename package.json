@@ -1,0 +1,15 @@
+{
+  "name": "cf-worker-old-sunset-4710",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check worker.js",
+    "render-check": "node scripts/render-check.mjs && node --check runtime-script-0.js",
+    "build": "npm run check && npm run render-check",
+    "deploy": "wrangler deploy worker.js --keep-vars"
+  },
+  "devDependencies": {
+    "wrangler": "^4.86.0"
+  }
+}
