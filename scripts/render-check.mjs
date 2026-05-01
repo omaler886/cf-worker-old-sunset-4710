@@ -33,7 +33,7 @@ await writeFile('runtime-render-check.html', html);
 if (!response.ok) {
   throw new Error(`Expected 2xx response, got ${response.status}`);
 }
-if (html.includes('__INITIAL_LINKS_PAYLOAD__') || html.includes('__BACKGROUND_IMAGE_URLS__')) {
+if (html.includes('__INITIAL_LINKS_PAYLOAD__') || html.includes('__BACKGROUND_IMAGE_URLS__') || html.includes('__API_BASE_URL__')) {
   throw new Error('Template placeholders were not replaced');
 }
 if (html.includes('<script src="https://v1.hitokoto.cn/?encode=js') || html.includes("<script src='https://v1.hitokoto.cn/?encode=js")) {
@@ -44,6 +44,9 @@ if (!html.includes('function loadHitokoto') || !html.includes('animateSectionReo
 }
 if (!html.includes("const jsonHeaders = { 'Content-Type': 'application/json' };")) {
   throw new Error('Frontend JSON request headers are missing');
+}
+if (!html.includes('function apiUrl(path)')) {
+  throw new Error('Frontend API URL helper is missing');
 }
 
 const inlineScripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].map((match) => match[1]);

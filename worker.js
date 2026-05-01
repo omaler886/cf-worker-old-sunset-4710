@@ -2742,6 +2742,7 @@ const HTML_CONTENT = `
     };
     const INITIAL_LINKS_PAYLOAD = __INITIAL_LINKS_PAYLOAD__;
     const BACKGROUND_IMAGE_URLS = __BACKGROUND_IMAGE_URLS__;
+    const API_BASE_URL = '__API_BASE_URL__';
     const LOGIN_TOKEN_EXPIRY_MINUTES = 7 * 24 * 60;
     const LOGIN_TOKEN_STORAGE_KEY = 'authToken';
     const LOGIN_TOKEN_EXPIRES_AT_KEY = 'authTokenExpiresAt';
@@ -2846,6 +2847,12 @@ const HTML_CONTENT = `
         renderSections();
         updateCategorySelect();
         updateUIState();
+    }
+
+    function apiUrl(path) {
+        const normalizedPath = path.startsWith('/') ? path : '/' + path;
+        const base = (API_BASE_URL || '').trim().replace(new RegExp('/+$'), '');
+        return base ? base + normalizedPath : normalizedPath;
     }
 
     async function fetchWithTimeout(resource, options, timeoutMs) {
@@ -3582,7 +3589,7 @@ const HTML_CONTENT = `
         }
 
         try {
-            const response = await fetchWithTimeout('/api/getLinks?userId=testUser', {
+            const response = await fetchWithTimeout(apiUrl('/api/getLinks?userId=testUser'), {
                 headers: headers
             }, 8000);
 
@@ -3987,7 +3994,7 @@ const HTML_CONTENT = `
         }));
 
         try {
-            const response = await fetchWithTimeout('/api/saveOrder', {
+            const response = await fetchWithTimeout(apiUrl('/api/saveOrder'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -4565,7 +4572,7 @@ const HTML_CONTENT = `
 
             // 在进入设置模式之前进行备份
             try {
-                const response = await fetch('/api/backupData', {
+                const response = await fetch(apiUrl('/api/backupData'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -5102,7 +5109,7 @@ const HTML_CONTENT = `
 
     // 验证密码
     async function verifyPassword(inputPassword) {
-        const response = await fetch('/api/verifyPassword', {
+        const response = await fetch(apiUrl('/api/verifyPassword'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password: inputPassword, expiryMinutes: LOGIN_TOKEN_EXPIRY_MINUTES }),
@@ -5270,7 +5277,7 @@ const HTML_CONTENT = `
         }
 
         try {
-            const response = await fetchWithTimeout('/api/getLinks?userId=testUser', {
+            const response = await fetchWithTimeout(apiUrl('/api/getLinks?userId=testUser'), {
                 headers: { 'Authorization': token }
             }, 8000);
 
@@ -6146,7 +6153,8 @@ export default {
         const backgroundImageUrls = await getConfiguredBackgroundImages(env);
         const htmlContent = HTML_CONTENT
           .replace('__INITIAL_LINKS_PAYLOAD__', sanitizeForInlineScript(initialLinksPayload))
-          .replace('__BACKGROUND_IMAGE_URLS__', sanitizeForInlineScript(backgroundImageUrls));
+          .replace('__BACKGROUND_IMAGE_URLS__', sanitizeForInlineScript(backgroundImageUrls))
+          .replace('__API_BASE_URL__', '');
         return new Response(htmlContent, {
           headers: { 'Content-Type': 'text/html' }
         });
