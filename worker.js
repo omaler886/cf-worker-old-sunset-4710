@@ -2745,6 +2745,7 @@ const HTML_CONTENT = `
     const LOGIN_TOKEN_EXPIRY_MINUTES = 7 * 24 * 60;
     const LOGIN_TOKEN_STORAGE_KEY = 'authToken';
     const LOGIN_TOKEN_EXPIRES_AT_KEY = 'authTokenExpiresAt';
+    const jsonHeaders = { 'Content-Type': 'application/json' };
 
     let currentEngine = "baidu";
     let mainAppBooted = false;

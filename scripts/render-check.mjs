@@ -42,6 +42,9 @@ if (html.includes('<script src="https://v1.hitokoto.cn/?encode=js') || html.incl
 if (!html.includes('function loadHitokoto') || !html.includes('animateSectionReorder')) {
   throw new Error('Expected startup and reorder fixes are missing');
 }
+if (!html.includes("const jsonHeaders = { 'Content-Type': 'application/json' };")) {
+  throw new Error('Frontend JSON request headers are missing');
+}
 
 const inlineScripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].map((match) => match[1]);
 await Promise.all(inlineScripts.map((script, index) => writeFile(`runtime-script-${index}.js`, script)));
