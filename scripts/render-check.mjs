@@ -48,6 +48,14 @@ if (!html.includes("const jsonHeaders = { 'Content-Type': 'application/json' };"
 if (!html.includes('function apiUrl(path)')) {
   throw new Error('Frontend API URL helper is missing');
 }
+if (!html.includes('<meta name="color-scheme" content="light dark">')
+  || !html.includes('color-scheme: light;')
+  || !html.includes('color-scheme: dark;')) {
+  throw new Error('Theme color-scheme guard is missing');
+}
+if (html.includes('夜间自动切换') || html.includes('白天自动切换')) {
+  throw new Error('Auto theme must follow system preference, not local clock time');
+}
 
 const inlineScripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].map((match) => match[1]);
 await Promise.all(inlineScripts.map((script, index) => writeFile(`runtime-script-${index}.js`, script)));

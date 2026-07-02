@@ -5,11 +5,13 @@ const HTML_CONTENT = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="card-tab-build" content="20260430-startup-fix-smooth-reorder">
+    <meta name="color-scheme" content="light dark">
     <title>Card Tab</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>⭐</text></svg>">
     <style>
     /* 全局样式 */
     :root {
+        color-scheme: light;
         --wallpaper-accent-soft: rgba(255, 255, 255, 0.36);
         --wallpaper-accent-border: rgba(255, 255, 255, 0.52);
         --wallpaper-accent-glow: rgba(255, 255, 255, 0.18);
@@ -92,9 +94,9 @@ const HTML_CONTENT = `
 
     .theme-wash-dark {
         background:
-            radial-gradient(circle at 18% 22%, rgba(67, 184, 131, 0.12), transparent 30%),
-            radial-gradient(circle at 82% 20%, rgba(93, 127, 185, 0.16), transparent 30%),
-            linear-gradient(180deg, rgba(10, 14, 20, 0.56), rgba(14, 18, 27, 0.74));
+            radial-gradient(circle at 18% 22%, rgba(67, 184, 131, 0.2), transparent 32%),
+            radial-gradient(circle at 82% 20%, rgba(93, 127, 185, 0.24), transparent 32%),
+            linear-gradient(180deg, rgba(27, 36, 50, 0.52), rgba(23, 31, 44, 0.66));
         opacity: 0;
     }
 
@@ -127,11 +129,11 @@ const HTML_CONTENT = `
     .ambient-orb.orb-c { background: rgba(255, 194, 102, 0.22); }
 
     body.dark-theme .background-image-layer {
-        filter: saturate(0.94) contrast(1.06) brightness(0.62);
+        filter: saturate(0.98) contrast(1.04) brightness(0.76);
     }
 
     body.dark-theme .background-image-layer.is-visible {
-        opacity: 0.62;
+        opacity: 0.68;
     }
 
     body.dark-theme .theme-wash-light {
@@ -139,7 +141,7 @@ const HTML_CONTENT = `
     }
 
     body.dark-theme .theme-wash-dark {
-        opacity: 0.9;
+        opacity: 0.72;
     }
 
     body.dark-theme .ambient-grid {
@@ -158,19 +160,20 @@ const HTML_CONTENT = `
 
     /* 暗色模式样式 */
     body.dark-theme {
-        background-color: #141920;
+        color-scheme: dark;
+        background-color: #1d2633;
         color: #e6ebf2;
-        --card-fill-top: rgba(18, 22, 29, 0.66);
-        --card-fill-bottom: rgba(11, 14, 21, 0.5);
-        --card-fill-hover-top: rgba(24, 29, 38, 0.78);
-        --card-fill-hover-bottom: rgba(14, 18, 26, 0.62);
-        --card-outline-soft: rgba(121, 151, 219, 0.26);
-        --card-outline-mid: rgba(255, 255, 255, 0.04);
-        --card-outline-hover-mid: rgba(150, 177, 235, 0.12);
-        --card-outline-deep: rgba(47, 63, 99, 0.44);
-        --card-outline-glow: rgba(76, 110, 179, 0.12);
-        --card-sheen-top: rgba(154, 182, 238, 0.08);
-        --card-sheen-bottom: rgba(255, 255, 255, 0.02);
+        --card-fill-top: rgba(37, 47, 63, 0.84);
+        --card-fill-bottom: rgba(29, 38, 53, 0.72);
+        --card-fill-hover-top: rgba(47, 59, 78, 0.9);
+        --card-fill-hover-bottom: rgba(36, 47, 64, 0.8);
+        --card-outline-soft: rgba(151, 177, 229, 0.34);
+        --card-outline-mid: rgba(255, 255, 255, 0.08);
+        --card-outline-hover-mid: rgba(164, 190, 240, 0.18);
+        --card-outline-deep: rgba(72, 92, 135, 0.5);
+        --card-outline-glow: rgba(93, 127, 185, 0.18);
+        --card-sheen-top: rgba(184, 205, 246, 0.12);
+        --card-sheen-bottom: rgba(255, 255, 255, 0.04);
         --card-side-accent: rgba(93, 127, 185, 0.82);
         --card-side-glow: rgba(93, 127, 185, 0.18);
         --card-backdrop-blur: 18px;
@@ -197,8 +200,8 @@ const HTML_CONTENT = `
     }
 
     body.dark-theme .fixed-elements {
-        background: linear-gradient(180deg, rgba(13, 17, 24, 0.8) 0%, rgba(13, 17, 24, 0.68) 58%, rgba(13, 17, 24, 0.24) 100%);
-        border-bottom-color: rgba(93, 127, 185, 0.12);
+        background: linear-gradient(180deg, rgba(27, 36, 50, 0.86) 0%, rgba(27, 36, 50, 0.72) 58%, rgba(27, 36, 50, 0.28) 100%);
+        border-bottom-color: rgba(126, 156, 215, 0.18);
         box-shadow: 0 14px 36px rgba(3, 8, 18, 0.18);
     }
 
@@ -1453,7 +1456,7 @@ const HTML_CONTENT = `
         border: 1px solid transparent;
         overflow: hidden;
         animation: fadeIn 0.3s ease forwards;
-        animation-delay: calc(var(--card-index) * 0.05s);
+        animation-delay: calc(var(--card-index) * 0.02s);
         opacity: 0;
         margin: 0;
     }
@@ -3828,8 +3831,8 @@ const HTML_CONTENT = `
         card.dataset.isPrivate = link.isPrivate;
         card.setAttribute('data-url', link.url);
 
-        // 设置卡片动画延迟
-        const cardIndex = container.children.length;
+        // 首屏大量卡片同时渲染时，延迟封顶可以避免长时间排队动画拖慢交互。
+        const cardIndex = Math.min(container.children.length, 12);
         card.style.setProperty('--card-index', cardIndex);
 
         const cardTop = document.createElement('div');
@@ -3844,6 +3847,12 @@ const HTML_CONTENT = `
         // 创建图标元素
         const icon = document.createElement('img');
         icon.className = 'card-icon';
+        icon.loading = 'lazy';
+        icon.decoding = 'async';
+        icon.referrerPolicy = 'no-referrer';
+        if ('fetchPriority' in icon) {
+            icon.fetchPriority = 'low';
+        }
 
         // 使用自定义图标或回退到favicon提取服务
         icon.src = (
@@ -4647,21 +4656,13 @@ const HTML_CONTENT = `
     }
 
     function getAutoThemeState() {
-        const hour = new Date().getHours();
-        const isNight = hour >= 18 || hour < 6;
         const mediaQuery = getThemeMediaQuery();
         const prefersDark = mediaQuery ? mediaQuery.matches : false;
 
-        if (prefersDark && isNight) {
-            return { isDark: true, reason: '系统深色 + 夜间' };
-        }
         if (prefersDark) {
             return { isDark: true, reason: '系统深色' };
         }
-        if (isNight) {
-            return { isDark: true, reason: '夜间自动切换' };
-        }
-        return { isDark: false, reason: '白天自动切换' };
+        return { isDark: false, reason: '系统浅色' };
     }
 
     function applyThemeAppearance(shouldUseDark) {
@@ -5792,14 +5793,23 @@ const HTML_CONTENT = `
     function bootWeatherApp() {
         if (weatherAppBooted) return;
         weatherAppBooted = true;
-        initAmbientBackground();
+        // 背景图片和天气都不是首屏操作入口，放到空闲时段减少新进页面卡顿。
+        const startAmbientBackground = function() {
+            initAmbientBackground();
+        };
+        if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(startAmbientBackground, { timeout: 1800 });
+        } else {
+            setTimeout(startAmbientBackground, 900);
+        }
+
         setTimeout(function() {
             console.log('开始初始化天气组件...');
             initWeather().catch(function(err) {
                 console.error('天气初始化失败:', err);
                 document.getElementById('weather-mini').innerHTML = '<span class="weather-loading">加载失败</span>';
             });
-        }, 500); // 延迟加载，优先加载主内容
+        }, 1000); // 延迟加载，优先加载主内容
     }
 
     function bootApplication() {

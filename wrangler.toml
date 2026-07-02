@@ -5,7 +5,7 @@ keep_vars = true
 
 [[kv_namespaces]]
 binding = "CARD_ORDER"
-id = "aa25253a5c7b4d2db98af146406fe970"
+id = "3908bfd2e95747c697f99396fe2a4357"
 
 [observability]
 enabled = true
