@@ -1143,8 +1143,8 @@ const HTML_CONTENT = `
         box-sizing: border-box;
         background-color: rgba(0, 0, 0, 0.6);
         justify-content: center;
-        align-items: flex-start;
-        overflow-y: auto;
+        align-items: center;
+        overflow: hidden;
         z-index: 10000;
         padding: max(20px, env(safe-area-inset-top)) 14px max(20px, env(safe-area-inset-bottom));
         backdrop-filter: blur(3px);
@@ -1164,7 +1164,7 @@ const HTML_CONTENT = `
         background-color: white;
         padding: 25px;
         border-radius: 10px;
-        width: 350px;
+        width: min(440px, 100%);
         max-width: calc(100vw - 28px);
         max-height: calc(100vh - 40px);
         max-height: calc(100dvh - 40px);
@@ -1190,7 +1190,7 @@ const HTML_CONTENT = `
         to { opacity: 1; transform: translateY(0); }
     }
 
-    #dialog-box input, #dialog-box select {
+    #dialog-box input:not([type="checkbox"]), #dialog-box select {
         width: 100%;
         margin-bottom: 15px;
         padding: 10px;
@@ -1228,7 +1228,38 @@ const HTML_CONTENT = `
         border-radius: 5px;
         cursor: pointer;
         transition: all 0.3s ease;
-        margin-right: 10px;
+    }
+
+    .private-link-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 15px;
+        padding: 10px 0;
+    }
+
+    .private-link-container label {
+        margin: 0;
+    }
+
+    #private-checkbox {
+        width: 20px;
+        height: 20px;
+        flex: 0 0 auto;
+        margin: 0;
+        padding: 0;
+        accent-color: #43b883;
+    }
+
+    @media (max-height: 720px), (max-width: 520px) {
+        #dialog-overlay {
+            align-items: flex-start;
+        }
+
+        #dialog-box {
+            padding: 20px;
+        }
     }
 
     #dialog-box button:hover {
@@ -4576,12 +4607,9 @@ const HTML_CONTENT = `
                 return;
             }
 
-            // 显示加载状态
             showLoading('正在进入设置模式...');
-
-            // 在进入设置模式之前进行备份
             try {
-                const response = await fetch(apiUrl('/api/backupData'), {
+                const response = await fetchWithTimeout(apiUrl('/api/backupData'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -4590,8 +4618,9 @@ const HTML_CONTENT = `
                     body: JSON.stringify({
                         sourceUserId: 'testUser',
                         backupUserId: 'backup'
-                    }),
-                });
+                    })
+                }, 10000);
+                if (!response.ok) throw new Error('备份请求失败：' + response.status);
                 const result = await response.json();
                 if (result.success) {
                     logAction('数据备份成功');
@@ -4599,7 +4628,6 @@ const HTML_CONTENT = `
                     throw new Error('备份失败');
                 }
             } catch (error) {
-                // 🔧 安全修复：避免泄露详细错误信息
                 logAction('数据备份失败', { error: 'Backup operation failed' });
                 hideLoading();
                 const confirmed = await customConfirm('备份失败，是否仍要继续进入设置模式？', '是', '否');
@@ -4614,8 +4642,12 @@ const HTML_CONTENT = `
                 addRemoveControls.style.display = 'flex';
                 await reloadCardsAsAdmin();
                 logAction('进入设置');
-                hideLoading();
                 await customAlert('准备设置分类和书签', '设置模式');
+            } catch (error) {
+                isAdmin = false;
+                addRemoveControls.style.display = 'none';
+                logAction('进入设置失败', { error: 'Admin mode initialization failed' });
+                await customAlert('进入设置模式失败，请稍后重试。', '设置模式');
             } finally {
                 hideLoading();
             }
