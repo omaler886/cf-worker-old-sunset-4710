@@ -1168,6 +1168,7 @@ const HTML_CONTENT = `
         max-width: calc(100vw - 28px);
         max-height: calc(100vh - 40px);
         max-height: calc(100dvh - 40px);
+        overflow-x: hidden;
         overflow-y: auto;
         box-sizing: border-box;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -1192,6 +1193,7 @@ const HTML_CONTENT = `
 
     #dialog-box input:not([type="checkbox"]), #dialog-box select {
         width: 100%;
+        box-sizing: border-box;
         margin-bottom: 15px;
         padding: 10px;
         border: 1px solid #e0e0e0;
