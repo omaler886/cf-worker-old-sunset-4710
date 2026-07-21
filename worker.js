@@ -4,7 +4,7 @@ const HTML_CONTENT = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="card-tab-build" content="20260430-startup-fix-smooth-reorder">
+    <meta name="card-tab-build" content="20260721-neutral-public-categories">
     <meta name="color-scheme" content="light dark">
     <title>Card Tab</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>⭐</text></svg>">
@@ -12,6 +12,16 @@ const HTML_CONTENT = `
     /* 全局样式 */
     :root {
         color-scheme: light;
+        --page-max-width: 1540px;
+        --accent: #34b77b;
+        --accent-strong: #159963;
+        --accent-soft: rgba(52, 183, 123, 0.14);
+        --text-primary: #1b2430;
+        --text-secondary: #667085;
+        --surface: rgba(255, 255, 255, 0.68);
+        --surface-strong: rgba(255, 255, 255, 0.84);
+        --surface-border: rgba(255, 255, 255, 0.72);
+        --section-shadow: 0 20px 52px rgba(43, 55, 72, 0.08);
         --wallpaper-accent-soft: rgba(255, 255, 255, 0.36);
         --wallpaper-accent-border: rgba(255, 255, 255, 0.52);
         --wallpaper-accent-glow: rgba(255, 255, 255, 0.18);
@@ -35,15 +45,22 @@ const HTML_CONTENT = `
     }
 
     body {
-        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        font-family: 'Segoe UI Variable', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         margin: 0;
         padding: 0;
         position: relative;
         overflow-x: hidden;
         background-color: #f3efe6;
-        color: #222; /* 深灰字体 */
+        color: var(--text-primary);
         transition: background-color 0.72s ease, color 0.36s ease;
         min-height: 100vh;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    :where(a, button, input, select):focus-visible {
+        outline: 3px solid rgba(52, 183, 123, 0.34);
+        outline-offset: 3px;
     }
 
     .ambient-background {
@@ -71,11 +88,11 @@ const HTML_CONTENT = `
         transform-origin: center;
         transition: opacity 1.45s ease, transform 26s ease;
         filter: saturate(1.08) contrast(1.06) brightness(1.01);
-        will-change: transform, opacity;
     }
 
     .background-image-layer.is-visible {
         opacity: 0.84;
+        will-change: transform, opacity;
     }
 
     .theme-wash {
@@ -120,7 +137,6 @@ const HTML_CONTENT = `
         border-radius: 50%;
         filter: blur(80px);
         opacity: 0.46;
-        will-change: transform;
         transition: transform 16s ease-in-out, opacity 9s ease, background 10s ease;
     }
 
@@ -163,6 +179,12 @@ const HTML_CONTENT = `
         color-scheme: dark;
         background-color: #1d2633;
         color: #e6ebf2;
+        --text-primary: #eef3f8;
+        --text-secondary: #aab6c5;
+        --surface: rgba(28, 38, 53, 0.72);
+        --surface-strong: rgba(36, 48, 65, 0.86);
+        --surface-border: rgba(151, 177, 229, 0.18);
+        --section-shadow: 0 22px 58px rgba(2, 8, 20, 0.24);
         --card-fill-top: rgba(37, 47, 63, 0.84);
         --card-fill-bottom: rgba(29, 38, 53, 0.72);
         --card-fill-hover-top: rgba(47, 59, 78, 0.9);
@@ -191,9 +213,9 @@ const HTML_CONTENT = `
         background: linear-gradient(180deg, rgba(248, 246, 242, 0.82) 0%, rgba(248, 246, 242, 0.72) 62%, rgba(248, 246, 242, 0.24) 100%);
         border-bottom: 1px solid rgba(67, 184, 131, 0.08);
         z-index: 1000;
-        padding: 7px 10px 4px;
+        padding: 10px 18px 6px;
         transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
-        height: 132px;
+        height: 136px;
         box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
         backdrop-filter: blur(24px) saturate(150%);
         -webkit-backdrop-filter: blur(24px) saturate(150%);
@@ -203,6 +225,57 @@ const HTML_CONTENT = `
         background: linear-gradient(180deg, rgba(27, 36, 50, 0.86) 0%, rgba(27, 36, 50, 0.72) 58%, rgba(27, 36, 50, 0.28) 100%);
         border-bottom-color: rgba(126, 156, 215, 0.18);
         box-shadow: 0 14px 36px rgba(3, 8, 18, 0.18);
+    }
+
+    .brand-area {
+        position: absolute;
+        top: 12px;
+        left: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10;
+    }
+
+    .brand-lockup {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+
+    .brand-mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 11px;
+        background: linear-gradient(145deg, rgba(52, 183, 123, 0.96), rgba(44, 151, 181, 0.9));
+        box-shadow: 0 8px 20px rgba(30, 156, 108, 0.2);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .brand-copy {
+        display: grid;
+        gap: 1px;
+        text-align: left;
+    }
+
+    .brand-copy strong {
+        font-size: 14px;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+    }
+
+    .brand-copy small {
+        color: var(--text-secondary);
+        font-size: 10px;
+        line-height: 1.2;
     }
 
     /* 分类快捷按钮容器样式移至搜索栏内 */
@@ -228,7 +301,6 @@ const HTML_CONTENT = `
         margin: 0 2px;
         position: relative;
         overflow: hidden;
-        will-change: transform, background-color, box-shadow;
         backface-visibility: hidden;
         scroll-snap-align: center;
     }
@@ -300,24 +372,6 @@ const HTML_CONTENT = `
         }
     }
 
-    /* 分类按钮悬停样式 */
-
-    .fixed-elements h3 {
-        position: absolute;
-        top: 10px;
-        left: 20px;
-        margin: 0;
-        font-size: 22px;
-        font-weight: 600;
-        color: #222;
-        transition: all 0.3s ease;
-        z-index: 10;
-    }
-
-    body.dark-theme .fixed-elements h3 {
-        color: #e3e3e3;
-    }
-
     /* 一言模块样式 */
     #hitokoto {
         display: block;
@@ -364,16 +418,17 @@ const HTML_CONTENT = `
         left: 50%;
         transform: translate(-50%, -50%);
         width: 100%;
-        max-width: none; /* 不限制最大宽度，使分类按钮有更多空间 */
+        max-width: none;
         text-align: center;
-        padding: 0 10px; /* 添加左右内边距 */
+        padding: 0 180px;
+        box-sizing: border-box;
     }
 
     /* 右上角控制区域样式 */
     .top-right-controls {
         position: fixed;
-        top: 10px;
-        right: 10px;
+        top: 12px;
+        right: 18px;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -844,9 +899,9 @@ const HTML_CONTENT = `
 
     /* 主要内容区域样式 */
     .content {
-        margin-top: 146px;
-        padding: 10px;
-        max-width: 1600px;
+        margin-top: 154px;
+        padding: 12px 18px 56px;
+        max-width: var(--page-max-width);
         margin-left: auto;
         margin-right: auto;
         position: relative;
@@ -907,13 +962,14 @@ const HTML_CONTENT = `
         justify-content: center;
         margin-bottom: 7px;
         width: 100%;
-        max-width: 600px;
+        max-width: 680px;
         margin-left: auto;
         margin-right: auto;
-        border-radius: 14px;
+        min-height: 46px;
+        border-radius: 16px;
         overflow: hidden;
         background-color: rgba(255, 255, 255, 0.7);
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.36);
         backdrop-filter: blur(18px) saturate(140%);
         -webkit-backdrop-filter: blur(18px) saturate(140%);
@@ -921,8 +977,8 @@ const HTML_CONTENT = `
     }
 
     .search-bar:focus-within {
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-        border-color: #43b883;
+        box-shadow: 0 12px 34px rgba(28, 141, 96, 0.14);
+        border-color: rgba(52, 183, 123, 0.66);
     }
 
     .search-bar select {
@@ -986,8 +1042,8 @@ const HTML_CONTENT = `
         flex: 1;
         border: none;
         padding: 10px 15px;
-        font-size: 14px;
-        background-color: #fff;
+        font-size: 15px;
+        background-color: rgba(255, 255, 255, 0.84);
         outline: none;
     }
 
@@ -998,6 +1054,12 @@ const HTML_CONTENT = `
         padding: 0 20px;
         cursor: pointer;
         transition: background-color 0.3s;
+    }
+
+    .search-bar button svg {
+        width: 18px;
+        height: 18px;
+        display: block;
     }
 
     .search-bar button:hover {
@@ -1338,19 +1400,29 @@ const HTML_CONTENT = `
 
     /* 分类和卡片样式 */
     .section {
-        margin-bottom: 25px;
-        padding: 0 15px;
+        margin: 0 auto 18px;
+        padding: 18px 20px 22px;
+        max-width: var(--page-max-width);
+        border: 1px solid var(--surface-border);
+        border-radius: 24px;
+        background: linear-gradient(145deg, var(--surface-strong), var(--surface));
+        box-shadow: var(--section-shadow);
+        backdrop-filter: blur(16px) saturate(135%);
+        -webkit-backdrop-filter: blur(16px) saturate(135%);
+        content-visibility: auto;
+        contain: layout paint style;
+        contain-intrinsic-size: 220px;
         transition:
             opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
             transform 0.58s cubic-bezier(0.22, 1, 0.36, 1),
             filter 0.5s ease,
             box-shadow 0.38s ease;
-        will-change: transform, opacity;
     }
 
     .section.is-reordering {
         position: relative;
         z-index: 2;
+        will-change: transform;
     }
 
     .section.is-reorder-target {
@@ -1361,6 +1433,8 @@ const HTML_CONTENT = `
         opacity: 0;
         transform: translate3d(0, 18px, 0);
         filter: blur(1.5px) saturate(0.96);
+        transition-delay: var(--section-delay, 0ms);
+        will-change: transform, opacity;
     }
 
     .section.is-visible {
@@ -1389,12 +1463,12 @@ const HTML_CONTENT = `
     .section-title-container {
         display: flex;
         align-items: center;
-        margin-bottom: 18px;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 10px;
+        margin-bottom: 14px;
+        border-bottom: 1px solid rgba(102, 112, 133, 0.14);
+        padding-bottom: 12px;
         transition: border-color 0.3s ease;
         width: 100%;
-        max-width: 1520px;
+        max-width: none;
         margin-left: auto;
         margin-right: auto;
     }
@@ -1404,13 +1478,15 @@ const HTML_CONTENT = `
     }
 
     .section-title {
-        font-size: 22px;
-        font-weight: 600;
-        color: #222;
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--text-primary);
         position: relative;
         padding-left: 15px;
         transition: color 0.3s ease;
-        min-width: 120px;
+        min-width: 0;
+        margin: 0;
+        letter-spacing: -0.02em;
     }
 
     body.dark-theme .section-title {
@@ -1423,10 +1499,27 @@ const HTML_CONTENT = `
         left: 0;
         top: 50%;
         transform: translateY(-50%);
-        width: 5px;
-        height: 22px;
-        background-color: #43b883;
-        border-radius: 2px;
+        width: 4px;
+        height: 20px;
+        background: linear-gradient(180deg, var(--accent), #2c97b5);
+        border-radius: 999px;
+    }
+
+    .section-meta {
+        margin-left: 10px;
+        padding: 3px 8px;
+        border: 1px solid rgba(52, 183, 123, 0.14);
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent-strong);
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    body.dark-theme .section-meta {
+        color: #8ee0b8;
+        border-color: rgba(142, 224, 184, 0.18);
     }
 
     .delete-category-btn {
@@ -1454,23 +1547,33 @@ const HTML_CONTENT = `
 
     .card-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, 150px);
-        column-gap: 8px;
-        row-gap: 6px;
+        grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+        gap: 12px;
         justify-content: start;
-        padding: 8px 6px 4px 12px;
+        padding: 2px 0 0;
         margin: 0 auto;
-        max-width: 1500px;
+        max-width: none;
+    }
+
+    .empty-section-state {
+        grid-column: 1 / -1;
+        padding: 22px;
+        border: 1px dashed rgba(102, 112, 133, 0.24);
+        border-radius: 16px;
+        color: var(--text-secondary);
+        font-size: 13px;
+        text-align: center;
     }
 
     .card {
         background:
             linear-gradient(135deg, var(--card-fill-top), var(--card-fill-bottom)) padding-box,
             linear-gradient(145deg, var(--card-outline-soft), var(--card-outline-mid) 38%, var(--card-outline-deep)) border-box;
-        border-radius: 14px;
-        padding: 4px 9px 3px;
-        width: 143px;
-        min-height: 57px;
+        border-radius: 18px;
+        padding: 12px 14px 11px;
+        width: auto;
+        min-width: 0;
+        min-height: 78px;
         box-shadow:
             var(--card-shadow),
             0 0 0 1px rgba(255, 255, 255, 0.04),
@@ -1485,13 +1588,15 @@ const HTML_CONTENT = `
         display: flex;
         flex-direction: column;
         justify-content: center;
-        gap: 1px;
+        gap: 7px;
         border: 1px solid transparent;
         overflow: hidden;
         animation: fadeIn 0.3s ease forwards;
         animation-delay: calc(var(--card-index) * 0.02s);
         opacity: 0;
         margin: 0;
+        color: inherit;
+        text-decoration: none;
     }
 
     .card::before {
@@ -1538,20 +1643,20 @@ const HTML_CONTENT = `
         display: flex;
         align-items: center;
         margin-bottom: 0;
-        gap: 5px;
+        gap: 9px;
     }
 
     .card-icon {
-        width: 16px;
-        height: 16px;
+        width: 24px;
+        height: 24px;
         margin-right: 0;
         flex: 0 0 auto;
     }
 
     .card-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #222;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-primary);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1562,14 +1667,12 @@ const HTML_CONTENT = `
     .card-url {
         font-size: 12px;
         font-weight: 500;
-        color: #888;
-        white-space: normal;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        display: block;
         overflow: hidden;
         text-overflow: ellipsis;
-        line-height: 1.2;
+        line-height: 1.35;
         margin-top: 0;
         transition: color 0.3s ease;
     }
@@ -1672,6 +1775,8 @@ const HTML_CONTENT = `
         font-size: 13px;
         margin-left: 12px;
         vertical-align: middle;
+        border: 0;
+        font-family: inherit;
     }
     .weather-mini:hover {
         background: rgba(67, 184, 131, 0.2);
@@ -1920,7 +2025,7 @@ const HTML_CONTENT = `
             gap: 6px 8px;
             padding: 8px 12px 6px 12px;
             height: auto;
-            min-height: 156px;
+            min-height: 164px;
             box-shadow: none;
         }
 
@@ -1928,13 +2033,29 @@ const HTML_CONTENT = `
             box-shadow: none;
         }
 
-        .fixed-elements h3 {
+        .brand-area {
             position: static;
             top: auto;
             left: auto;
             margin: 0;
-            font-size: 0;
             align-self: center;
+            gap: 7px;
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .brand-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+        }
+
+        .brand-copy small {
+            display: none;
+        }
+
+        .brand-copy strong {
+            font-size: 13px;
         }
 
         .weather-mini {
@@ -1950,6 +2071,8 @@ const HTML_CONTENT = `
             justify-self: end;
             gap: 8px;
             flex-wrap: nowrap;
+            grid-column: 2;
+            grid-row: 1;
         }
 
         .top-right-controls > * {
@@ -1975,6 +2098,9 @@ const HTML_CONTENT = `
             font-size: 12px;
             line-height: 1.3;
             padding: 0 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .category-buttons-container {
@@ -2006,9 +2132,9 @@ const HTML_CONTENT = `
         }
 
         .content {
-            margin-top: 166px;
+            margin-top: 202px;
             margin-bottom: 100px;
-            padding: 12px;
+            padding: 8px 10px;
             transition: opacity 0.3s ease;
         }
 
@@ -2019,6 +2145,7 @@ const HTML_CONTENT = `
             text-align: center;
             padding: 0 8px;
             grid-column: 1 / -1;
+            grid-row: 2;
         }
 
         .loading .content {
@@ -2031,10 +2158,11 @@ const HTML_CONTENT = `
 
         .search-bar {
             flex-wrap: nowrap;
-            max-width: 320px;
-            width: 90%;
+            max-width: 340px;
+            width: 100%;
             margin: 4px auto 8px auto;
-            border-radius: 14px;
+            min-height: 44px;
+            border-radius: 15px;
         }
 
         .search-bar select {
@@ -2063,20 +2191,19 @@ const HTML_CONTENT = `
         .card-container {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            column-gap: 5px;
-            row-gap: 5px;
+            gap: 8px;
             justify-content: center;
-            padding: 7px 3px 4px;
+            padding: 2px 0 0;
             margin: 0 auto;
         }
 
         .card {
             width: auto;
             max-width: 100%;
-            min-height: 57px;
-            padding: 4px 8px 3px;
+            min-height: 72px;
+            padding: 10px 11px 9px;
             margin: 0;
-            border-radius: 14px;
+            border-radius: 16px;
         }
 
         .card-title {
@@ -2089,13 +2216,11 @@ const HTML_CONTENT = `
 
         .card-url {
             font-size: 12px;
-            white-space: normal;
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
+            display: block;
         }
 
         .add-remove-controls {
@@ -2137,8 +2262,15 @@ const HTML_CONTENT = `
         }
 
         .section-title {
-            font-size: 20px;
-            min-width: 100px;
+            font-size: 17px;
+            min-width: 0;
+        }
+
+        .section {
+            margin-bottom: 12px;
+            padding: 14px 13px 16px;
+            border-radius: 20px;
+            contain-intrinsic-size: 190px;
         }
 
         .boot-status {
@@ -2561,8 +2693,7 @@ const HTML_CONTENT = `
     /* 卡片悬停效果 */
     @media (hover: hover) and (pointer: fine) {
         .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px);
         }
 
         .card.no-hover:hover {
@@ -2593,8 +2724,19 @@ const HTML_CONTENT = `
         <div class="ambient-orb orb-b"></div>
         <div class="ambient-orb orb-c"></div>
     </div>
-    <div class="fixed-elements">
-        <h3><span class="weather-mini" id="weather-mini" onclick="openWeatherModal()"><span class="weather-loading">天气</span></span></h3>
+    <header class="fixed-elements">
+        <div class="brand-area">
+            <a class="brand-lockup" href="/" aria-label="Card Tab 首页">
+                <span class="brand-mark" aria-hidden="true">CT</span>
+                <span class="brand-copy">
+                    <strong>Card Tab</strong>
+                    <small>你的专属起始页</small>
+                </span>
+            </a>
+            <button class="weather-mini" id="weather-mini" type="button" onclick="openWeatherModal()" aria-label="查看天气详情">
+                <span class="weather-loading">天气</span>
+            </button>
+        </div>
         <div class="center-content">
             <!-- 一言模块 -->
             <p id="hitokoto" class="is-loading">
@@ -2603,28 +2745,33 @@ const HTML_CONTENT = `
             <!-- 搜索栏 -->
             <div class="search-container">
                 <div class="search-bar">
-                    <select id="search-engine-select">
+                    <select id="search-engine-select" aria-label="选择搜索引擎">
                         <option value="baidu">百度</option>
                         <option value="bing">必应</option>
                         <option value="google">谷歌</option>
                         <option value="duckduckgo">DuckDuckGo</option>
                     </select>
-                    <input type="text" id="search-input" placeholder="">
-                    <button id="search-button">🔍</button>
+                    <input type="search" id="search-input" placeholder="搜索网页或输入关键词" aria-label="搜索关键词" autocomplete="off">
+                    <button id="search-button" type="button" aria-label="搜索">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <path d="m20 20-4-4"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
             <div id="category-buttons-container" class="category-buttons-container"></div>
         </div>
         <!-- 右上角控制区域 -->
         <div class="top-right-controls">
-            <button class="admin-btn" id="admin-btn" onclick="toggleAdminMode()" style="display: none;">设置</button>
-            <button class="login-btn" id="login-btn" onclick="handleLoginClick()">登录</button>
-            <button class="github-btn has-tooltip tooltip-bottom tooltip-green" onclick="openGitHub()" data-tooltip="喜欢请点个star">
+            <button class="admin-btn" id="admin-btn" type="button" onclick="toggleAdminMode()" style="display: none;">设置</button>
+            <button class="login-btn" id="login-btn" type="button" onclick="handleLoginClick()">登录</button>
+            <button class="github-btn has-tooltip tooltip-bottom tooltip-green" type="button" onclick="openGitHub()" data-tooltip="喜欢请点个star" aria-label="打开 GitHub 仓库">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                 </svg>
             </button>
-            <div class="bookmark-search-toggle" onclick="toggleBookmarkSearch()">
+            <div class="bookmark-search-toggle" role="button" tabindex="0" onclick="toggleBookmarkSearch()" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleBookmarkSearch(); }" aria-label="搜索书签">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.35-4.35"></path>
@@ -2632,12 +2779,12 @@ const HTML_CONTENT = `
                     <line x1="8" y1="11" x2="14" y2="11"></line>
                 </svg>
                 <div class="bookmark-search-dropdown" id="bookmark-search-dropdown">
-                    <input type="text" id="bookmark-search-input" placeholder="搜索书签...">
+                    <input type="search" id="bookmark-search-input" placeholder="搜索书签..." onclick="event.stopPropagation()" aria-label="搜索书签">
                 </div>
             </div>
         </div>
-    </div>
-    <div class="content">
+    </header>
+    <main class="content">
         <!-- 管理控制按钮 -->
         <div class="add-remove-controls">
             <button class="round-btn add-btn" onclick="showAddDialog()" title="添加链接">
@@ -2765,7 +2912,7 @@ const HTML_CONTENT = `
                 <p>加载中，请稍候...</p>
             </div>
         </div>
-    </div>
+    </main>
     <div id="custom-tooltip"></div>
 
     <script>
@@ -2782,6 +2929,10 @@ const HTML_CONTENT = `
     const LOGIN_TOKEN_EXPIRY_MINUTES = 7 * 24 * 60;
     const LOGIN_TOKEN_STORAGE_KEY = 'authToken';
     const LOGIN_TOKEN_EXPIRES_AT_KEY = 'authTokenExpiresAt';
+    const HITOKOTO_CACHE_KEY = 'cardTabHitokoto';
+    const DEFAULT_CARD_ICON_URL = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>'
+    );
     const jsonHeaders = { 'Content-Type': 'application/json' };
 
     let currentEngine = "baidu";
@@ -2790,10 +2941,13 @@ const HTML_CONTENT = `
     let ambientBackgroundBooted = false;
     let bootStatusPinned = false;
     let backgroundImageLayers = [];
+    let backgroundImageUrls = Array.isArray(BACKGROUND_IMAGE_URLS) ? BACKGROUND_IMAGE_URLS.slice() : [];
     let currentBackgroundLayerIndex = 0;
     let currentBackgroundImageIndex = -1;
     let backgroundImageTimer = null;
+    let ambientAnimationTimer = null;
     let backgroundImageSwapInFlight = false;
+    let categoryVisibilityObserver = null;
     let activeCategoryName = '';
     let scrollAnimationFrame = null;
 
@@ -3019,23 +3173,41 @@ const HTML_CONTENT = `
         activeCategoryName = category;
     }
 
+    /**
+     * 使用单次批量提交为新分类添加轻量入场动画。
+     * @param {HTMLElement[]} sections 新渲染的分类节点。
+     * @returns {void} 不返回值。
+     */
     function animateRenderedSections(sections) {
         if (!sections || !sections.length) return;
 
         if (prefersReducedMotion()) {
             sections.forEach(function(section) {
+                section.classList.remove('is-entering');
                 section.classList.add('is-visible');
             });
             return;
         }
 
+        sections.forEach(function(section, index) {
+            section.style.setProperty('--section-delay', Math.min(index, 8) * 34 + 'ms');
+        });
+
         requestAnimationFrame(function() {
-            sections.forEach(function(section, index) {
-                setTimeout(function() {
+            requestAnimationFrame(function() {
+                sections.forEach(function(section) {
                     section.classList.add('is-visible');
-                }, index * 38);
+                });
             });
         });
+
+        // 单个清理任务即可释放临时合成层，避免按分类创建大量定时器。
+        setTimeout(function() {
+            sections.forEach(function(section) {
+                section.classList.remove('is-entering');
+                section.style.removeProperty('--section-delay');
+            });
+        }, 760);
     }
 
     window.addEventListener('error', function(event) {
@@ -3054,6 +3226,10 @@ const HTML_CONTENT = `
         }
     });
 
+    /**
+     * 加载一言文案，并使用会话缓存避免每次刷新都访问第三方服务。
+     * @returns {Promise<void>} 文案加载完成后结束。
+     */
     async function loadHitokoto() {
         const container = document.getElementById('hitokoto');
         const textEl = document.getElementById('hitokoto_text');
@@ -3061,16 +3237,23 @@ const HTML_CONTENT = `
 
         container.classList.add('is-loading');
         try {
-            const response = await fetch('https://v1.hitokoto.cn/?encode=json', {
-                cache: 'no-store',
+            const cachedText = sessionStorage.getItem(HITOKOTO_CACHE_KEY);
+            if (cachedText) {
+                textEl.textContent = cachedText;
+                return;
+            }
+
+            const response = await fetchWithTimeout('https://v1.hitokoto.cn/?encode=json', {
+                cache: 'default',
                 referrerPolicy: 'no-referrer'
-            });
+            }, 3500);
             if (!response.ok) {
                 throw new Error('hitokoto_load_failed');
             }
             const payload = await response.json();
             const nextText = payload && typeof payload.hitokoto === 'string' ? payload.hitokoto.trim() : '';
             textEl.textContent = nextText || '今天也要好好生活。';
+            sessionStorage.setItem(HITOKOTO_CACHE_KEY, textEl.textContent);
         } catch (error) {
             console.warn('一言加载失败，使用默认文案');
             textEl.textContent = '今天也要好好生活。';
@@ -3083,11 +3266,77 @@ const HTML_CONTENT = `
         return Math.random() * (max - min) + min;
     }
 
+    /**
+     * 获取已清洗的背景图片列表。
+     * @returns {string[]} 可安全用于预加载的图片地址。
+     */
     function getBackgroundImageList() {
-        if (!Array.isArray(BACKGROUND_IMAGE_URLS)) return [];
-        return BACKGROUND_IMAGE_URLS
+        if (!Array.isArray(backgroundImageUrls)) return [];
+        return backgroundImageUrls
             .filter(function(url) { return typeof url === 'string' && url.trim() !== ''; })
             .map(function(url) { return url.trim(); });
+    }
+
+    /**
+     * 判断是否应限制持续视觉效果，避免后台标签页或省流设备浪费资源。
+     * @returns {boolean} 需要暂停动画和轮播时返回 true。
+     */
+    function shouldLimitVisualEffects() {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        return document.hidden || prefersReducedMotion() || !!(connection && connection.saveData);
+    }
+
+    /**
+     * 根据页面可见性和用户偏好同步背景动画定时器。
+     * @returns {void} 不返回值。
+     */
+    function syncVisualEffectTimers() {
+        if (shouldLimitVisualEffects()) {
+            clearInterval(backgroundImageTimer);
+            clearInterval(ambientAnimationTimer);
+            backgroundImageTimer = null;
+            ambientAnimationTimer = null;
+            return;
+        }
+
+        if (!ambientAnimationTimer) {
+            animateAmbientBackground();
+            ambientAnimationTimer = setInterval(animateAmbientBackground, 18000);
+        }
+
+        if (!backgroundImageTimer && backgroundImageLayers.length >= 2 && getBackgroundImageList().length) {
+            rotateBackgroundImage();
+            backgroundImageTimer = setInterval(rotateBackgroundImage, 60000);
+        }
+    }
+
+    /**
+     * 空闲时获取边缘缓存的每日背景图，不让第三方请求阻塞 HTML 首字节。
+     * @returns {Promise<void>} 背景列表更新完成后结束。
+     */
+    async function loadRemoteBackgroundImages() {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection && connection.saveData) return;
+
+        try {
+            const response = await fetchWithTimeout(apiUrl('/api/backgrounds'), {
+                headers: { 'Accept': 'application/json' },
+                cache: 'force-cache'
+            }, 5000);
+            if (!response.ok) return;
+
+            const payload = await response.json();
+            const nextImages = Array.isArray(payload && payload.images)
+                ? payload.images.filter(function(url) { return typeof url === 'string' && url.trim(); })
+                : [];
+            if (!nextImages.length || JSON.stringify(nextImages) === JSON.stringify(backgroundImageUrls)) return;
+
+            backgroundImageUrls = nextImages;
+            currentBackgroundImageIndex = -1;
+            syncVisualEffectTimers();
+        } catch (error) {
+            console.warn('远程背景列表加载失败，继续使用内置背景');
+        }
     }
 
     function preloadBackgroundImage(url) {
@@ -3152,22 +3401,17 @@ const HTML_CONTENT = `
         backgroundImageSwapInFlight = false;
     }
 
+    /**
+     * 初始化双层背景容器，实际轮播由统一生命周期控制器管理。
+     * @returns {void} 不返回值。
+     */
     function initBackgroundImageStage() {
-        if (backgroundImageTimer) return;
-
         backgroundImageLayers = [
             document.getElementById('background-image-layer-a'),
             document.getElementById('background-image-layer-b')
         ].filter(Boolean);
 
-        if (backgroundImageLayers.length < 2 || !getBackgroundImageList().length) {
-            return;
-        }
-
-        rotateBackgroundImage();
-        backgroundImageTimer = setInterval(function() {
-            rotateBackgroundImage();
-        }, 46000);
+        syncVisualEffectTimers();
     }
 
     function animateAmbientBackground() {
@@ -3190,12 +3434,26 @@ const HTML_CONTENT = `
         });
     }
 
+    /**
+     * 初始化环境背景，并注册可见性和省电偏好监听。
+     * @returns {void} 不返回值。
+     */
     function initAmbientBackground() {
         if (ambientBackgroundBooted) return;
         ambientBackgroundBooted = true;
         initBackgroundImageStage();
-        animateAmbientBackground();
-        setInterval(animateAmbientBackground, 12000);
+        syncVisualEffectTimers();
+        document.addEventListener('visibilitychange', syncVisualEffectTimers);
+
+        const motionQuery = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (motionQuery && typeof motionQuery.addEventListener === 'function') {
+            motionQuery.addEventListener('change', syncVisualEffectTimers);
+        }
+
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection && typeof connection.addEventListener === 'function') {
+            connection.addEventListener('change', syncVisualEffectTimers);
+        }
     }
 
     // 设置当前搜索引擎
@@ -3280,7 +3538,6 @@ const HTML_CONTENT = `
             privateLinks = privateLinks.filter(link => link.category !== category);
             updateCategorySelect();
             renderSections();
-            renderCategoryButtons();
             saveLinks();
             logAction('删除分类', { category });
         }
@@ -3317,7 +3574,6 @@ const HTML_CONTENT = `
 
         // 3. 保存并刷新
         renderSections();
-        renderCategoryButtons();
         updateCategorySelect();
         saveLinks();
 
@@ -3413,7 +3669,6 @@ const HTML_CONTENT = `
 
         renderSections({ animateEntrance: false });
         animateSectionReorder(previousRects, categoryName);
-        renderCategoryButtons();
         updateCategorySelect();
         saveLinks();
 
@@ -3462,74 +3717,85 @@ const HTML_CONTENT = `
 
 
 
-    // 渲染分类快捷按钮
+    /**
+     * 根据已渲染分类生成快捷导航，避免再次遍历全部链接数据。
+     * @returns {void} 不返回值。
+     */
     function renderCategoryButtons() {
-        // 如果正在显示搜索结果，不重新渲染分类按钮
         if (isShowingSearchResults) {
             return;
         }
 
         const buttonsContainer = document.getElementById('category-buttons-container');
         buttonsContainer.innerHTML = '';
-
-        // 只有当有分类时才显示按钮容器
-        if (Object.keys(categories).length > 0) {
-            // 获取页面上实际显示的分类顺序（只从sections-container中获取，不包括搜索结果）
-            const displayedCategories = [];
-            document.querySelectorAll('#sections-container .section-title').forEach(titleElement => {
-                displayedCategories.push(titleElement.textContent);
-            });
-
-            // 创建按钮并添加到容器
-            let visibleButtonsCount = 0;
-            displayedCategories.forEach(category => {
-                // 检查该分类是否有可见的链接
-                const visibleLinks = links.filter(function(link) {
-                    return link.category === category && (!link.isPrivate || isLoggedIn);
-                });
-
-                // 只为有可见链接的分类创建按钮
-                if (visibleLinks.length > 0) {
-                    const button = document.createElement('button');
-                    button.className = 'category-button';
-                    button.textContent = category;
-                    button.dataset.category = category;
-                    button.onclick = () => {
-                        // 如果正在显示搜索结果，先隐藏搜索结果
-                        if (isShowingSearchResults) {
-                            hideSearchResults();
-                        }
-
-                        setActiveCategoryButton(category, {
-                            animate: true,
-                            center: true,
-                            force: true
-                        });
-                        scrollToCategory(category);
-                    };
-
-                    buttonsContainer.appendChild(button);
-                    visibleButtonsCount++;
-                }
-            });
-
-            // 显示或隐藏按钮容器
-            if (visibleButtonsCount > 0) {
-                buttonsContainer.style.display = 'flex';
-            } else {
-                buttonsContainer.style.display = 'none';
-            }
-
-            // 初始时检测当前可见分类并设置相应按钮为活跃状态
-            activeCategoryName = '';
-            setTimeout(function() {
-                setActiveCategoryButtonByVisibility(true);
-            }, 100);
-        } else {
+        const displayedSections = document.querySelectorAll('#sections-container .section[data-category]');
+        if (!displayedSections.length) {
             buttonsContainer.style.display = 'none';
+            return;
         }
+
+        const fragment = document.createDocumentFragment();
+        displayedSections.forEach(function(section) {
+            const category = section.dataset.category;
+            if (!category || !section.querySelector('.card')) return;
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'category-button';
+            button.textContent = category;
+            button.dataset.category = category;
+            button.onclick = function() {
+                if (isShowingSearchResults) {
+                    hideSearchResults();
+                }
+
+                setActiveCategoryButton(category, {
+                    animate: true,
+                    center: true,
+                    force: true
+                });
+                scrollToCategory(category);
+            };
+            fragment.appendChild(button);
+        });
+
+        buttonsContainer.appendChild(fragment);
+        buttonsContainer.style.display = buttonsContainer.children.length ? 'flex' : 'none';
+        activeCategoryName = '';
+        requestAnimationFrame(function() {
+            setActiveCategoryButtonByVisibility(true);
+        });
     }
 
+    /**
+     * 使用 IntersectionObserver 更新当前分类，减少滚动过程中的布局读取。
+     * @returns {void} 不返回值。
+     */
+    function initCategoryVisibilityObserver() {
+        if (categoryVisibilityObserver) {
+            categoryVisibilityObserver.disconnect();
+            categoryVisibilityObserver = null;
+        }
+
+        if (!('IntersectionObserver' in window)) {
+            return;
+        }
+
+        const topOffset = Math.ceil(getFixedScrollOffset());
+        categoryVisibilityObserver = new IntersectionObserver(function(entries) {
+            if (isShowingSearchResults || !entries.some(function(entry) { return entry.isIntersecting; })) {
+                return;
+            }
+            setActiveCategoryButtonByVisibility(false);
+        }, {
+            rootMargin: '-' + topOffset + 'px 0px -55% 0px',
+            threshold: [0, 0.15, 0.5]
+        });
+
+        document.querySelectorAll('#sections-container .section').forEach(function(section) {
+            categoryVisibilityObserver.observe(section);
+        });
+    }
     // 根据可见性设置活跃的分类按钮
     function setActiveCategoryButtonByVisibility(forceCenter) {
         // 如果正在显示搜索结果，不更新分类按钮的活跃状态
@@ -3577,8 +3843,11 @@ const HTML_CONTENT = `
         }
     }
 
-    // 添加滚动事件监听器，滚动时更新活跃的分类按钮
-    window.addEventListener('scroll', debounce(setActiveCategoryButtonByVisibility, 80), { passive: true });
+    // 老浏览器回退到节流滚动监听；现代浏览器由 IntersectionObserver 驱动。
+    if (!('IntersectionObserver' in window)) {
+        window.addEventListener('scroll', debounce(setActiveCategoryButtonByVisibility, 120), { passive: true });
+    }
+    window.addEventListener('resize', debounce(initCategoryVisibilityObserver, 220), { passive: true });
     window.addEventListener('wheel', stopAnimatedScroll, { passive: true });
     window.addEventListener('touchstart', stopAnimatedScroll, { passive: true });
     window.addEventListener('mousedown', stopAnimatedScroll, { passive: true });
@@ -3684,28 +3953,65 @@ const HTML_CONTENT = `
         }
     }
 
-    // 渲染分类和链接
+    /**
+     * 按分类一次性整理当前可见链接，避免分类数乘链接数的重复扫描。
+     * @returns {Map<string, object[]>} 分类名称到可见链接数组的映射。
+     */
+    function groupVisibleLinksByCategory() {
+        const groupedLinks = new Map();
+        Object.keys(categories).forEach(function(category) {
+            groupedLinks.set(category, []);
+        });
+
+        links.forEach(function(link) {
+            if (!link || typeof link.category !== 'string') return;
+            if (link.isPrivate && !isLoggedIn && !isAdmin) return;
+            if (!groupedLinks.has(link.category)) {
+                groupedLinks.set(link.category, []);
+            }
+            groupedLinks.get(link.category).push(link);
+        });
+        return groupedLinks;
+    }
+
+    /**
+     * 批量渲染分类与链接卡片，并在一次 DOM 提交后启用导航观察器。
+     * @param {{animateEntrance?: boolean}} options 渲染动画选项。
+     * @returns {void} 不返回值。
+     */
     function renderSections(options) {
         const renderOptions = Object.assign({ animateEntrance: true }, options || {});
         const container = document.getElementById('sections-container');
-        container.innerHTML = '';
+        container.replaceChildren();
         const renderedSections = [];
+        const fragment = document.createDocumentFragment();
+        const groupedLinks = groupVisibleLinksByCategory();
 
         Object.keys(categories).forEach(category => {
-            const section = document.createElement('div');
+            const categoryLinks = groupedLinks.get(category) || [];
+            if (!categoryLinks.length && !isLoggedIn) return;
+
+            const section = document.createElement('section');
             section.className = 'section is-entering';
+            section.dataset.category = category;
 
             const titleContainer = document.createElement('div');
             titleContainer.className = 'section-title-container';
 
-            const title = document.createElement('div');
+            const title = document.createElement('h2');
             title.className = 'section-title';
             title.textContent = category;
 
             titleContainer.appendChild(title);
 
+            const sectionMeta = document.createElement('span');
+            sectionMeta.className = 'section-meta';
+            sectionMeta.textContent = categoryLinks.length + ' 项';
+            titleContainer.appendChild(sectionMeta);
+
             if (isAdmin) {
                 const editBtn = document.createElement('button');
+                editBtn.type = 'button';
                 editBtn.textContent = '编辑名称';
                 editBtn.className = 'edit-category-btn';
                 editBtn.style.display = isEditCategoryMode ? 'inline-block' : 'none';
@@ -3713,6 +4019,7 @@ const HTML_CONTENT = `
                 titleContainer.appendChild(editBtn);
 
                 const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
                 deleteBtn.textContent = '删除分类';
                 deleteBtn.className = 'delete-category-btn';
                 deleteBtn.style.display = isEditCategoryMode ? 'inline-block' : 'none';
@@ -3720,6 +4027,7 @@ const HTML_CONTENT = `
                 titleContainer.appendChild(deleteBtn);
 
                 const upBtn = document.createElement('button');
+                upBtn.type = 'button';
                 upBtn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 6l-6 6h4v6h4v-6h4z"/></svg>';
                 upBtn.className = 'move-category-btn';
                 upBtn.style.display = isEditCategoryMode ? 'inline-block' : 'none';
@@ -3727,6 +4035,7 @@ const HTML_CONTENT = `
                 titleContainer.appendChild(upBtn);
 
                 const downBtn = document.createElement('button');
+                downBtn.type = 'button';
                 downBtn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 18l6-6h-4v-6h-4v6h-4z"/></svg>';
                 downBtn.className = 'move-category-btn';
                 downBtn.style.display = isEditCategoryMode ? 'inline-block' : 'none';
@@ -3741,25 +4050,26 @@ const HTML_CONTENT = `
             section.appendChild(titleContainer);
             section.appendChild(cardContainer);
 
-            let privateCount = 0;
-            let linkCount = 0;
-
-            links.forEach(link => {
-                if (link.category === category) {
-                    if (link.isPrivate) privateCount++;
-                    linkCount++;
-                    createCard(link, cardContainer);
-                }
+            categoryLinks.forEach(function(link) {
+                createCard(link, cardContainer);
             });
 
-            if (privateCount < linkCount || isLoggedIn) {
-                container.appendChild(section);
-                renderedSections.push(section);
+            if (!categoryLinks.length) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-section-state';
+                emptyState.textContent = '暂无链接，可在设置模式中添加。';
+                cardContainer.appendChild(emptyState);
             }
+
+            fragment.appendChild(section);
+            renderedSections.push(section);
         });
+
+        container.appendChild(fragment);
 
         // 渲染分类快捷按钮
         renderCategoryButtons();
+        initCategoryVisibilityObserver();
         if (renderOptions.animateEntrance) {
             animateRenderedSections(renderedSections);
         } else {
@@ -3856,13 +4166,29 @@ const HTML_CONTENT = `
         }
     }
 
-    // 创建卡片
+    /**
+     * 创建单张链接卡片；公开模式使用原生链接，管理控件仅在管理员模式生成。
+     * @param {object} link 链接数据。
+     * @param {HTMLElement} container 卡片容器。
+     * @returns {void} 卡片会直接追加到容器。
+     */
     function createCard(link, container) {
-        const card = document.createElement('div');
+        const correctedUrl = link.url.startsWith('http://') || link.url.startsWith('https://')
+            ? link.url
+            : 'https://' + link.url;
+        const card = document.createElement(isAdmin ? 'div' : 'a');
         card.className = 'card';
-        card.setAttribute('draggable', isAdmin);
         card.dataset.isPrivate = link.isPrivate;
         card.setAttribute('data-url', link.url);
+        card.setAttribute('aria-label', link.name + '，打开 ' + extractDomain(correctedUrl));
+
+        if (isAdmin) {
+            card.setAttribute('draggable', 'true');
+        } else {
+            card.href = correctedUrl;
+            card.target = '_blank';
+            card.rel = 'noopener noreferrer';
+        }
 
         // 首屏大量卡片同时渲染时，延迟封顶可以避免长时间排队动画拖慢交互。
         const cardIndex = Math.min(container.children.length, 12);
@@ -3871,18 +4197,16 @@ const HTML_CONTENT = `
         const cardTop = document.createElement('div');
         cardTop.className = 'card-top';
 
-        // 定义默认的 SVG 图标
-        const defaultIconSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>' +
-        '<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>' +
-        '</svg>';
-
         // 创建图标元素
         const icon = document.createElement('img');
         icon.className = 'card-icon';
         icon.loading = 'lazy';
         icon.decoding = 'async';
         icon.referrerPolicy = 'no-referrer';
+        icon.width = 24;
+        icon.height = 24;
+        icon.alt = '';
+        icon.setAttribute('aria-hidden', 'true');
         if ('fetchPriority' in icon) {
             icon.fetchPriority = 'low';
         }
@@ -3897,15 +4221,10 @@ const HTML_CONTENT = `
             ? 'https://www.faviconextractor.com/favicon/' + extractDomain(link.url)
             : link.icon;
 
-        icon.alt = 'Website Icon';
-
-        // 如果图片加载失败，使用默认的 SVG 图标
+        // 共享数据 URI 避免每张失败图标都创建 Blob 和对象 URL。
         icon.onerror = function() {
-            const svgBlob = new Blob([defaultIconSVG], {type: 'image/svg+xml'});
-            const svgUrl = URL.createObjectURL(svgBlob);
-            this.src = svgUrl;
-
-            this.onload = () => URL.revokeObjectURL(svgUrl);
+            this.onerror = null;
+            this.src = DEFAULT_CARD_ICON_URL;
         };
 
         const title = document.createElement('div');
@@ -3917,7 +4236,8 @@ const HTML_CONTENT = `
 
         const url = document.createElement('div');
         url.className = 'card-url';
-        url.textContent = link.url;
+        url.textContent = extractDomain(correctedUrl);
+        url.title = link.url;
 
         card.appendChild(cardTop);
         card.appendChild(url);
@@ -3929,70 +4249,63 @@ const HTML_CONTENT = `
             card.appendChild(privateTag);
         }
 
-        const correctedUrl = link.url.startsWith('http://') || link.url.startsWith('https://') ? link.url : 'http://' + link.url;
-
         if (!isAdmin) {
-            card.addEventListener('click', () => {
-                window.open(correctedUrl, '_blank');
+            card.addEventListener('click', function() {
                 logAction('打开链接', { name: link.name, url: correctedUrl });
             });
         }
 
-        // 创建按钮容器
-        const cardActions = document.createElement('div');
-        cardActions.className = 'card-actions';
-
-        // 编辑按钮
-        const editBtn = document.createElement('button');
-        editBtn.className = 'card-btn edit-btn';
-        editBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-            '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>' +
-            '<path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>' +
-            '</svg>';
-        editBtn.title = '编辑';
-        editBtn.onclick = function (event) {
-            event.stopPropagation();
-            showEditDialog(link);
-        };
-
-        // 删除按钮
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'card-btn delete-btn';
-        deleteBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-            '<polyline points="3,6 5,6 21,6"></polyline>' +
-            '<path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>' +
-            '<line x1="10" y1="11" x2="10" y2="17"></line>' +
-            '<line x1="14" y1="11" x2="14" y2="17"></line>' +
-            '</svg>';
-        deleteBtn.title = '删除';
-        deleteBtn.onclick = function (event) {
-            event.stopPropagation();
-            removeCard(card);
-        };
-
-        cardActions.appendChild(editBtn);
-        cardActions.appendChild(deleteBtn);
-        card.appendChild(cardActions);
-
         // 添加鼠标悬停事件处理描述提示
-        card.addEventListener('mousemove', (e) => handleTooltipMouseMove(e, link.tips, isAdmin));
-        card.addEventListener('mouseleave', handleTooltipMouseLeave);
-
-        card.addEventListener('dragstart', dragStart);
-        card.addEventListener('dragover', dragOver);
-        card.addEventListener('dragend', dragEnd);
-        card.addEventListener('drop', drop);
-        card.addEventListener('touchstart', touchStart, { passive: false });
-
-        if (isAdmin && removeMode) {
-            editBtn.style.display = 'flex';
-            deleteBtn.style.display = 'flex';
+        if (link.tips || isAdmin) {
+            card.addEventListener('mousemove', function(event) {
+                handleTooltipMouseMove(event, link.tips, isAdmin);
+            });
+            card.addEventListener('mouseleave', handleTooltipMouseLeave);
         }
 
-        if (isAdmin || (link.isPrivate && isLoggedIn) || !link.isPrivate) {
-            container.appendChild(card);
+        if (isAdmin) {
+            const cardActions = document.createElement('div');
+            cardActions.className = 'card-actions';
+
+            const editBtn = document.createElement('button');
+            editBtn.type = 'button';
+            editBtn.className = 'card-btn edit-btn';
+            editBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
+            editBtn.title = '编辑';
+            editBtn.setAttribute('aria-label', '编辑 ' + link.name);
+            editBtn.onclick = function(event) {
+                event.stopPropagation();
+                showEditDialog(link);
+            };
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'card-btn delete-btn';
+            deleteBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,6 5,6 21,6"></polyline><path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>';
+            deleteBtn.title = '删除';
+            deleteBtn.setAttribute('aria-label', '删除 ' + link.name);
+            deleteBtn.onclick = function(event) {
+                event.stopPropagation();
+                removeCard(card);
+            };
+
+            cardActions.appendChild(editBtn);
+            cardActions.appendChild(deleteBtn);
+            card.appendChild(cardActions);
+
+            card.addEventListener('dragstart', dragStart);
+            card.addEventListener('dragover', dragOver);
+            card.addEventListener('dragend', dragEnd);
+            card.addEventListener('drop', drop);
+            card.addEventListener('touchstart', touchStart, { passive: false });
+
+            if (removeMode) {
+                editBtn.style.display = 'flex';
+                deleteBtn.style.display = 'flex';
+            }
         }
 
+        container.appendChild(card);
     }
 
 
@@ -4564,9 +4877,12 @@ const HTML_CONTENT = `
         }
     }
 
-    // 打开GitHub仓库
+    /**
+     * 在隔离的新标签页打开项目仓库。
+     * @returns {void} 不返回值。
+     */
     function openGitHub() {
-        window.open('https://github.com/omaler886/cf-worker-old-sunset-4710', '_blank');
+        window.open('https://github.com/omaler886/cf-worker-old-sunset-4710', '_blank', 'noopener,noreferrer');
         logAction('访问GitHub仓库');
     }
 
@@ -5299,7 +5615,7 @@ const HTML_CONTENT = `
     }
 
     // 添加滚动事件监听器
-    window.addEventListener('scroll', handleBackToTopVisibility);
+    window.addEventListener('scroll', handleBackToTopVisibility, { passive: true });
 
 
     // 前端检查是否有 token
@@ -5824,12 +6140,17 @@ const HTML_CONTENT = `
         if (e.target.id === 'weather-modal') closeWeatherModal();
     }
 
+    /**
+     * 延迟启动天气和背景增强，确保书签交互优先可用。
+     * @returns {void} 不返回值。
+     */
     function bootWeatherApp() {
         if (weatherAppBooted) return;
         weatherAppBooted = true;
         // 背景图片和天气都不是首屏操作入口，放到空闲时段减少新进页面卡顿。
         const startAmbientBackground = function() {
             initAmbientBackground();
+            loadRemoteBackgroundImages();
         };
         if ('requestIdleCallback' in window) {
             window.requestIdleCallback(startAmbientBackground, { timeout: 1800 });
@@ -5889,6 +6210,121 @@ const HTML_CONTENT = `
 `;
 
 const DEFAULT_TOKEN_EXPIRY_MINUTES = 7 * 24 * 60;
+const PUBLIC_CATEGORY_ORDER = Object.freeze([
+    'AI',
+    '技术',
+    '网络',
+    '资讯',
+    '工具',
+    '服务',
+    '娱乐',
+    '社区',
+    '资源',
+    '图集'
+]);
+const PUBLIC_CATEGORY_BY_SOURCE = Object.freeze({
+    'AI工具': 'AI',
+    'AI中转': 'AI',
+    '技术社区': '技术',
+    '测速诊断': '网络',
+    '网络工具': '网络',
+    '新闻资讯': '资讯',
+    '资讯工具': '资讯',
+    '图床': '工具',
+    '文件传输': '工具',
+    '公益服务': '服务',
+    '自建服务': '服务',
+    '成人视频': '娱乐',
+    '二次元动画': '娱乐',
+    '娱乐工具': '娱乐',
+    '成人论坛': '社区',
+    '成人综合': '资源',
+    '资源导航': '资源',
+    '二次元漫画': '资源',
+    'Galgame': '资源',
+    '二次元综合': '资源',
+    '亚洲写真': '图集',
+    'Cosplay写真': '图集',
+    '写真图集': '图集',
+    '足控写真': '图集',
+    '成人图集': '图集'
+});
+const PUBLIC_URL_CATEGORY_RULES = Object.freeze([
+    {
+        pattern: /fitgirl-repacks\.site|gamer520\.com|store\.epicgames\.com|flingtrainer\.com/i,
+        category: '资源'
+    },
+    {
+        pattern: /earth\.google\.com|time\.is|duckduckgo\.com\/email/i,
+        category: '工具'
+    },
+    {
+        pattern: /dash\.cloudflare\.com|zeabur\.com|openid\.dooki\.cloud/i,
+        category: '服务'
+    },
+    {
+        pattern: /reddit\.com|(?:^|\.)x\.com|zhihu\.com/i,
+        category: '社区'
+    },
+    {
+        pattern: /openstreetmap\.org/i,
+        category: '资讯'
+    }
+]);
+
+/**
+ * 功能说明：为公开页面选择数量更少、表达更中性的分类。
+ * 参数说明：link 为原始书签对象。
+ * 返回值说明：返回公开页面使用的分类名称。
+ */
+function getPublicCategory(link) {
+    const url = String(link && link.url || '');
+    const matchedRule = PUBLIC_URL_CATEGORY_RULES.find((rule) => rule.pattern.test(url));
+    if (matchedRule) return matchedRule.category;
+
+    const sourceCategory = String(link && link.category || '').trim();
+    return PUBLIC_CATEGORY_BY_SOURCE[sourceCategory] || '资源';
+}
+
+/**
+ * 功能说明：将公开书签归并到固定顺序的中性分类中。
+ * 参数说明：links 为已过滤的公开书签数组。
+ * 返回值说明：返回与前端兼容的分类对象。
+ */
+function buildPublicCategories(links) {
+    const categoryBuckets = new Map();
+    for (const link of links) {
+        const categoryLinks = categoryBuckets.get(link.category) || [];
+        categoryLinks.push(link);
+        categoryBuckets.set(link.category, categoryLinks);
+    }
+
+    const categories = {};
+    for (const category of PUBLIC_CATEGORY_ORDER) {
+        const categoryLinks = categoryBuckets.get(category);
+        if (categoryLinks && categoryLinks.length) categories[category] = categoryLinks;
+    }
+
+    return categories;
+}
+
+/**
+ * 功能说明：创建公开页面数据，隐藏露骨分类并保留管理员原始数据。
+ * 参数说明：parsedData 为 KV 原始数据，warning 为可选加载警告。
+ * 返回值说明：返回公开书签和收敛后的分类数据。
+ */
+function createPublicLinksPayload(parsedData, warning) {
+    const allLinks = Array.isArray(parsedData && parsedData.links) ? parsedData.links : [];
+    const links = allLinks
+        .filter((link) => link && !link.isPrivate)
+        .map((link) => ({ ...link, category: getPublicCategory(link) }));
+    const payload = {
+        links,
+        categories: buildPublicCategories(links)
+    };
+    if (warning) payload.warning = warning;
+    return payload;
+}
 
 // 常量时间比较函数，防止时序攻击
 function constantTimeCompare(a, b) {
@@ -6002,11 +6438,17 @@ async function validateAdminToken(authToken, env) {
 }
 
 export default {
-    async fetch(request, env) {
+    async fetch(request, env, ctx) {
       const url = new URL(request.url);
-      const jsonHeaders = { 'Content-Type': 'application/json' };
-      const createJsonResponse = (payload, status = 200) =>
-        new Response(JSON.stringify(payload), { status, headers: jsonHeaders });
+      const jsonHeaders = {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'X-Content-Type-Options': 'nosniff'
+      };
+      const createJsonResponse = (payload, status = 200, additionalHeaders = {}) =>
+        new Response(JSON.stringify(payload), {
+          status,
+          headers: { ...jsonHeaders, ...additionalHeaders }
+        });
       const createEmptyLinksPayload = (warning) => {
         const payload = { links: [], categories: {} };
         if (warning) {
@@ -6016,30 +6458,6 @@ export default {
       };
       const sanitizeForInlineScript = (value) =>
         JSON.stringify(value).replace(/</g, '\\u003c').replace(/-->/g, '--\\>');
-      const normalizeCategories = (value) => {
-        const normalized = {};
-        if (!value || typeof value !== 'object') {
-          return normalized;
-        }
-        Object.keys(value).forEach((key) => {
-          normalized[key] = Array.isArray(value[key]) ? value[key] : [];
-        });
-        return normalized;
-      };
-      const buildPublicLinksPayload = (parsedData, warning) => {
-        const allLinks = Array.isArray(parsedData && parsedData.links) ? parsedData.links : [];
-        const allCategories = normalizeCategories(parsedData && parsedData.categories);
-        const filteredLinks = allLinks.filter((link) => !link.isPrivate);
-        const filteredCategories = {};
-        Object.keys(allCategories).forEach((category) => {
-          filteredCategories[category] = allCategories[category].filter((link) => !link.isPrivate);
-        });
-        const payload = { links: filteredLinks, categories: filteredCategories };
-        if (warning) {
-          payload.warning = warning;
-        }
-        return payload;
-      };
       const parseStringList = (value) => {
         const raw = String(value || '').trim();
         if (!raw) {
@@ -6126,10 +6544,18 @@ export default {
         const market = String(value || '').trim();
         return /^[A-Za-z]{2,3}(?:-[A-Za-z]{2,4})?$/.test(market) ? market : 'zh-CN';
       };
+      /**
+       * 获取 Bing 背景图列表，并让 Cloudflare 边缘缓存上游结果。
+       * @param {string} market Bing 市场代码。
+       * @returns {Promise<string[]>} 可用背景图片地址。
+       */
       const fetchBingBackgroundImages = async (market) => {
         const targetUrl = `https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=${encodeURIComponent(normalizeBingMarket(market))}`;
         try {
-          const response = await fetch(targetUrl);
+          const response = await fetch(targetUrl, {
+            headers: { 'Accept': 'application/json' },
+            cf: { cacheEverything: true, cacheTtl: 21600 }
+          });
           if (!response.ok) {
             return [];
           }
@@ -6148,13 +6574,31 @@ export default {
           return [];
         }
       };
-      const getConfiguredBackgroundImages = async (env) => {
-        const configured = parseStringList(env.BACKGROUND_IMAGE_URLS);
+
+      /**
+       * 生成首屏背景列表，只读取环境变量或内置资源，避免阻塞 HTML 响应。
+       * @param {object} workerEnv Worker 环境变量。
+       * @returns {string[]} 首屏可直接使用的背景列表。
+       */
+      const getInitialBackgroundImages = (workerEnv) => {
+        const configured = parseStringList(workerEnv.BACKGROUND_IMAGE_URLS);
+        return configured;
+      };
+
+      /**
+       * 获取延迟背景增强数据，配置优先，其次 Bing，最后回退内置资源。
+       * @param {object} workerEnv Worker 环境变量。
+       * @returns {Promise<{images: string[], source: string}>} 背景列表及来源。
+       */
+      const getBackgroundImagesPayload = async (workerEnv) => {
+        const configured = parseStringList(workerEnv.BACKGROUND_IMAGE_URLS);
         if (configured.length) {
-          return configured;
+          return { images: configured, source: 'configured' };
         }
-        const bingImages = await fetchBingBackgroundImages(env.BACKGROUND_BING_MARKET);
-        return bingImages.length ? bingImages : createDefaultBackgroundImages();
+        const bingImages = await fetchBingBackgroundImages(workerEnv.BACKGROUND_BING_MARKET);
+        return bingImages.length
+          ? { images: bingImages, source: 'bing' }
+          : { images: createDefaultBackgroundImages(), source: 'fallback' };
       };
       const loadInitialPublicLinksPayload = async (userId) => {
         if (!env.CARD_ORDER || typeof env.CARD_ORDER.get !== 'function') {
@@ -6173,7 +6617,7 @@ export default {
         }
 
         try {
-          return buildPublicLinksPayload(JSON.parse(data));
+          return createPublicLinksPayload(JSON.parse(data));
         } catch (error) {
           return createEmptyLinksPayload('card_order_invalid_json');
         }
@@ -6193,14 +6637,48 @@ export default {
       };
 
       if (url.pathname === '/') {
+        const edgeCache = request.method === 'GET'
+          && typeof caches !== 'undefined'
+          && caches.default
+          ? caches.default
+          : null;
+        if (edgeCache) {
+          const cachedResponse = await edgeCache.match(request);
+          if (cachedResponse) return cachedResponse;
+        }
+
         const initialLinksPayload = await loadInitialPublicLinksPayload('testUser');
-        const backgroundImageUrls = await getConfiguredBackgroundImages(env);
+        const backgroundImageUrls = getInitialBackgroundImages(env);
         const htmlContent = HTML_CONTENT
           .replace('__INITIAL_LINKS_PAYLOAD__', sanitizeForInlineScript(initialLinksPayload))
           .replace('__BACKGROUND_IMAGE_URLS__', sanitizeForInlineScript(backgroundImageUrls))
           .replace('__API_BASE_URL__', '');
-        return new Response(htmlContent, {
-          headers: { 'Content-Type': 'text/html' }
+        const htmlResponse = new Response(htmlContent, {
+          headers: {
+            'Content-Type': 'text/html; charset=UTF-8',
+            'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=300',
+            'Referrer-Policy': 'strict-origin-when-cross-origin',
+            'X-Content-Type-Options': 'nosniff',
+            'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+            'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
+          }
+        });
+
+        if (edgeCache) {
+          const cacheWrite = edgeCache.put(request, htmlResponse.clone());
+          if (ctx && typeof ctx.waitUntil === 'function') {
+            ctx.waitUntil(cacheWrite);
+          } else {
+            await cacheWrite;
+          }
+        }
+        return htmlResponse;
+      }
+
+      if (url.pathname === '/api/backgrounds') {
+        const payload = await getBackgroundImagesPayload(env);
+        return createJsonResponse(payload, 200, {
+          'Cache-Control': 'public, max-age=1800, s-maxage=21600, stale-while-revalidate=86400'
         });
       }
 
@@ -6347,7 +6825,10 @@ export default {
       const proxyWeatherJson = async (targetUrl, sourceName) => {
         let res;
         try {
-          res = await fetch(targetUrl);
+          res = await fetch(targetUrl, {
+            headers: { 'Accept': 'application/json' },
+            cf: { cacheEverything: true, cacheTtl: 600 }
+          });
         } catch (err) {
           return new Response(JSON.stringify({
             code: '502',
@@ -6541,7 +7022,7 @@ export default {
             }
 
             // 未提供 token，只返回公开数据
-            return createJsonResponse(buildPublicLinksPayload(parsedData));
+            return createJsonResponse(createPublicLinksPayload(parsedData));
         }
 
         return createJsonResponse(createEmptyLinksPayload());
